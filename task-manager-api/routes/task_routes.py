@@ -11,55 +11,18 @@ task_bp = Blueprint('tasks', __name__)
 @task_bp.route('/tasks', methods=['GET'])
 def get_tasks():
     try:
-        tasks = Task.query.all()
+        from sqlalchemy.orm import joinedload
+        tasks = Task.query.options(joinedload(Task.user), joinedload(Task.category)).all()
         result = []
         for t in tasks:
-            task_data = {}
-            task_data['id'] = t.id
-            task_data['title'] = t.title
-            task_data['description'] = t.description
-            task_data['status'] = t.status
-            task_data['priority'] = t.priority
-            task_data['user_id'] = t.user_id
-            task_data['category_id'] = t.category_id
-            task_data['created_at'] = str(t.created_at)
-            task_data['updated_at'] = str(t.updated_at)
-            task_data['due_date'] = str(t.due_date) if t.due_date else None
-            task_data['tags'] = t.tags.split(',') if t.tags else []
-
-            if t.due_date:
-                if t.due_date < datetime.utcnow():
-                    if t.status != 'done' and t.status != 'cancelled':
-                        task_data['overdue'] = True
-                    else:
-                        task_data['overdue'] = False
-                else:
-                    task_data['overdue'] = False
-            else:
-                task_data['overdue'] = False
-
-            if t.user_id:
-                user = User.query.get(t.user_id)
-                if user:
-                    task_data['user_name'] = user.name
-                else:
-                    task_data['user_name'] = None
-            else:
-                task_data['user_name'] = None
-
-            if t.category_id:
-                cat = Category.query.get(t.category_id)
-                if cat:
-                    task_data['category_name'] = cat.name
-                else:
-                    task_data['category_name'] = None
-            else:
-                task_data['category_name'] = None
-
+            task_data = t.to_dict()
+            task_data['user_name'] = t.user.name if t.user else None
+            task_data['category_name'] = t.category.name if t.category else None
             result.append(task_data)
 
         return jsonify(result), 200
-    except:
+    except Exception as e:
+        print(f"Erro ao listar tasks: {str(e)}")
         return jsonify({'error': 'Erro interno'}), 500
 
 @task_bp.route('/tasks/<int:task_id>', methods=['GET'])
