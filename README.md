@@ -107,39 +107,51 @@ A skill comportou-se de maneira adaptável notável. No Node.js, ela deu priorid
 
 **1. code-smells-project (Python/Flask)**
 ```text
-src/
-├── app.py (Composition Root)
-├── database.py
-├── config/
-│   └── settings.py (Variáveis de ambiente)
-├── models/
-│   └── product_model.py (SQL Parametrizado)
-├── controllers/
-├── routes/
-└── services/
-    └── sales_service.py (Lógica de negócio extraída)
+code-smells-project/
+├── app.py (Arquivo original legadado mantido para histórico)
+├── requirements.txt
+├── src/
+│   ├── app.py (Composition Root)
+│   ├── database.py
+│   ├── config/
+│   ├── models/
+│   ├── controllers/
+│   ├── routes/
+│   └── services/
 ```
 
 **2. ecommerce-api-legacy (Node.js/Express)**
 ```text
-src/
-├── app.js
-├── AppManager.js
-├── utils.js
-├── config/
-│   └── index.js (Configurações centralizadas)
-├── models/
-│   └── User.js (Refatorado para Async/Await)
-├── controllers/
-├── routes/
-└── services/
+ecommerce-api-legacy/
+├── .env (Credenciais e Variáveis de ambiente)
+├── .env.example
+├── src/
+│   ├── app.js (Composition Root)
+│   ├── utils.js
+│   ├── config/
+│   │   └── database.js (Inicialização do banco de dados)
+│   ├── models/
+│   │   └── Database.js (Wrapper de queries Async/Await)
+│   ├── controllers/
+│   │   ├── CheckoutController.js
+│   │   ├── ReportController.js
+│   │   └── UserController.js
+│   ├── routes/
+│   │   ├── index.js (Centralizador de rotas)
+│   │   └── ...
+│   └── services/
+│       ├── CheckoutService.js (Lógica de pagamento extraída)
+│       ├── ReportService.js
+│       └── UserService.js (Deleção em cascata)
 ```
 
 **3. task-manager-api (Python/Flask)**
 ```text
 task-manager-api/
-├── app.py
+├── app.py (Composition Root e Setup)
 ├── database.py
+├── seed.py (Mock de dados)
+├── requirements.txt
 ├── models/
 │   ├── task.py (Lógica is_overdue centralizada)
 │   ├── user.py
