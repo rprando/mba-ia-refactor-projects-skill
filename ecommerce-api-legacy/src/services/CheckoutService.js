@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const Database = require('../models/Database');
 const { config, logAndCache } = require('../utils');
 
@@ -8,7 +8,8 @@ class CheckoutService {
 
         let userId;
         if (!user) {
-            const hash = await bcrypt.hash(userData.pwd || "123456", 10);
+            // Utilizando o módulo crypto nativo do Node.js com Scrypt (sem depender de binários nativos do bcrypt)
+            const hash = crypto.scryptSync(userData.pwd || "123456", "salt_seguro", 64).toString('hex');
             const result = await Database.run("INSERT INTO users (name, email, pass) VALUES (?, ?, ?)", [userData.usr, userData.eml, hash]);
             userId = result.lastID;
         } else {

@@ -8,9 +8,9 @@ import os, sys, json, datetime
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', 'sqlite:///tasks.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'super-secret-key-123'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'super-secret-key-123')
 
 CORS(app)
 db.init_app(app)
@@ -31,4 +31,7 @@ with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.getenv('PORT', 5000))
+    host = os.getenv('HOST', '0.0.0.0')
+    debug = os.getenv('DEBUG', 'True') == 'True'
+    app.run(debug=debug, host=host, port=port)

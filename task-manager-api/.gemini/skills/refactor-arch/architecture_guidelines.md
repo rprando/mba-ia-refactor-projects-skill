@@ -4,7 +4,7 @@
 - `src/` ou raiz (dependendo do projeto)
     - `config/`: Configurações globais e variáveis de ambiente.
     - `models/`: Definição de dados e acesso ao banco (Queries, ORM).
-    - `controllers/`: Lógica de orquestração das rotas.
+    - `controllers/`: Lógica de orquestração টান das rotas.
     - `routes/`: Definição de endpoints e mapeamento para controllers.
     - `services/`: Lógica de negócio complexa e integrações externas.
     - `middlewares/`: Tratamento de erros, autenticação, etc.

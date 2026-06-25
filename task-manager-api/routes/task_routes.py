@@ -29,19 +29,7 @@ def get_tasks():
 def get_task(task_id):
     task = Task.query.get(task_id)
     if task:
-        data = task.to_dict()
-
-        if task.due_date:
-            if task.due_date < datetime.utcnow():
-                if task.status != 'done' and task.status != 'cancelled':
-                    data['overdue'] = True
-                else:
-                    data['overdue'] = False
-            else:
-                data['overdue'] = False
-        else:
-            data['overdue'] = False
-        return jsonify(data), 200
+        return jsonify(task.to_dict()), 200
     else:
         return jsonify({'error': 'Task não encontrada'}), 404
 
@@ -241,13 +229,10 @@ def task_stats():
     done = Task.query.filter_by(status='done').count()
     cancelled = Task.query.filter_by(status='cancelled').count()
 
-    all_tasks = Task.query.all()
-    overdue_count = 0
-    for t in all_tasks:
-        if t.due_date:
-            if t.due_date < datetime.utcnow():
-                if t.status != 'done' and t.status != 'cancelled':
-                    overdue_count = overdue_count + 1
+    overdue_count = Task.query.filter(
+        Task.due_date < datetime.utcnow(),
+        Task.status.notin_(['done', 'cancelled'])
+    ).count()
 
     stats = {
         'total': total,

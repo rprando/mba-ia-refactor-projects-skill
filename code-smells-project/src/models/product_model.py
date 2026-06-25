@@ -1,4 +1,4 @@
-from ..database import get_db
+from src.database import get_db
 
 def get_all():
     db = get_db()

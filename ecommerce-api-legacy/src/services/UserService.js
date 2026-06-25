@@ -1,6 +1,18 @@
 const Database = require('../models/Database');
 
 class UserService {
+    static async listUsers() {
+        return await Database.all("SELECT id, name, email FROM users");
+    }
+
+    static async getUserById(id) {
+        const user = await Database.get("SELECT id, name, email FROM users WHERE id = ?", [id]);
+        if (!user) return null;
+        const enrollments = await Database.all("SELECT course_id FROM enrollments WHERE user_id = ?", [id]);
+        user.enrollments = enrollments;
+        return user;
+    }
+
     static async deleteUser(id) {
         // Cascade delete: first find enrollments
         const enrollments = await Database.all("SELECT id FROM enrollments WHERE user_id = ?", [id]);
